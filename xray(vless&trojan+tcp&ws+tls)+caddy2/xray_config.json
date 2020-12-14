@@ -1,0 +1,142 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "error": "/var/log/xray/error.log",
+    "access": "/var/log/xray/access.log"
+  },
+  "inbounds": [
+    {
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "c7347475-0af3-48b6-be99-301a47b3204d",
+            "flow": "xtls-rprx-direct",
+            "email": "443@gmail.com"
+          }
+        ],
+        "decryption": "none",
+        "fallbacks": [
+          {
+            "dest": 2006,
+            "xver": 2
+          },
+          {
+            "path": "/foxzc",
+            "dest": 2001,
+            "xver": 1
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "xtls", 
+        "xtlsSettings": {
+          "alpn":[
+            "h2",
+            "http/1.1"
+          ],
+          "certificates": [
+            {
+              "certificateFile": "/etc/ssl/buyvm.foxzc.com/fullchain.cer",
+              "keyFile": "/etc/ssl/buyvm.foxzc.com/buyvm.foxzc.com.key"
+            }
+          ]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 2001,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "email": "2001@gmail.com",
+            "id": "c7347475-0af3-48b6-be99-301a47b3204d"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "acceptProxyProtocol": true,
+          "path": "/foxzc"
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 2006,
+      "protocol": "trojan",
+      "settings": {
+        "clients": [
+          {
+            "password":"jiajia11",
+            "email": "2006@gmail.com"
+          }
+        ],
+        "fallbacks": [
+          {
+            "dest": 88,
+            "xver": 2
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none",
+        "tcpSettings": {
+          "acceptProxyProtocol": true
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "blocked"
+      }
+    ]
+  },
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "tag": "blocked",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ]
+}
